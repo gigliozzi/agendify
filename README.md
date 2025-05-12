@@ -35,8 +35,11 @@ Acesse: [`/agendamentos`](http://localhost:3000/agendamentos)
 
 ## 📁 Estrutura de pastas
 ├── agenda.json # Onde os agendamentos são salvos
+
 ├── public/
+
 │ └── agendamentos.html
+
 ├── server.js # Código principal do servidor
 ├── .env # Credenciais da Twilio
 
