@@ -51,6 +51,7 @@ TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
 ```bash
 npm install
 npm start
+```
 
 Em seguida, acesse:
 Web: http://localhost:3000/agendamentos
