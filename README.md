@@ -36,8 +36,7 @@ Acesse: [`/agendamentos`](http://localhost:3000/agendamentos)
 ## 📁 Estrutura de pastas
 ├── agenda.json # Onde os agendamentos são salvos
 
-├── public/
-
+├── public/ <br>
 │ └── agendamentos.html
 
 ├── server.js # Código principal do servidor
