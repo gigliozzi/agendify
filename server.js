@@ -114,6 +114,10 @@ app.post("/reservar", (req, res) => {
 
 // Rota para receber mensagens do WhatsApp
 app.post("/webhook", (req, res) => {
+  const message = req.body.Body ? req.body.Body.toLowerCase() : "";
+  console.log("Mensagem recebida:", message);
+  const from = req.body.From;
+
   if (
     message.includes("oi") ||
     message.includes("olá") ||
@@ -125,11 +129,6 @@ app.post("/webhook", (req, res) => {
   }
 
   console.dir(req.body, { depth: null });
-
-  const message = req.body.Body ? req.body.Body.toLowerCase() : "";
-  console.log("Mensagem recebida:", message);
-  const from = req.body.From;
-
   console.log(">> Valor de 'from':", from);
   console.log(">> Valor de TWILIO_WHATSAPP_NUMBER:", TWILIO_WHATSAPP_NUMBER);
 
