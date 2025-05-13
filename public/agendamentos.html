@@ -5,6 +5,8 @@
     <meta charset="UTF-8" />
     <title>Agenda de Hoje</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=League+Spartan:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
       body {
         font-family: Arial, sans-serif;
         padding: 20px;
@@ -17,14 +19,29 @@
       ul {
         list-style: none;
         padding: 0;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        flex-direction: row;
       }
+
       li {
         padding: 8px;
         margin-bottom: 5px;
         background: #fff;
-        border-radius: 5px;
+        border-radius: 10px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        flex-basis: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-transform: uppercase;
+        position: relative;
+        transition: 0.6s;
+        cursor: pointer;
       }
+
       .livre {
         color: green;
         font-weight: bold;
@@ -32,6 +49,84 @@
       .reservado {
         color: #b44;
       }
+
+      .time {
+        font-family: "Poppins", sans-serif;
+      }
+
+      .status {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+      }
+
+
+      .bt-remover-agenda {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        transform: translate(7px, -7px);
+        color: #f6f6f6;
+        background-color: #bb4444;
+        border: none;
+        border-radius: 6px ;
+        box-sizing: border-box;
+        width: 22px;
+        height: 22px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+      }
+
+      li:hover {
+        transform: scale(1.2) rotatez(-10deg);
+      }
+
+      .animate-out {
+        animation: fancyExit 2.2s forwards ease-in-out;
+      }
+
+      /*.btn-animate {*/
+      /*  transform: translate(15px, 52px);*/
+      /*}*/
+
+      @keyframes fancyExit {
+        0% {
+          transform: rotate(0deg) translate(-18px, 2px);
+          opacity: 1;
+        }
+        10% {
+          transform: rotate(-70deg) translate(-10px, 0px);
+        }
+        20% {
+          transform: rotate(-110deg) translate(-22px, 4px);
+        }
+        30% {
+          transform: rotate(-80deg) translate(-12px, -2px);
+        }
+        40% {
+          transform: rotate(-100deg) translate(-20px, 5px);
+        }
+        50% {
+          transform: rotate(-85deg) translate(-15px, -1px);
+        }
+        60% {
+          transform: rotate(-95deg) translate(-18px, 3px);
+        }
+        70% {
+          transform: rotate(-87deg) translate(-14px, 0px);
+        }
+        80% {
+          transform: rotate(-93deg) translate(-17px, 1px);
+        }
+        90% {
+          transform: rotate(-90deg) translate(-16px, 0px);
+        }
+        100% {
+          transform: rotate(-90deg) translateY(1000px);
+          opacity: 0;
+        }
+      }
+
+
     </style>
   </head>
   <body>
@@ -40,4 +135,17 @@
       <!-- AGENDA_DATA -->
     </ul>
   </body>
+  <script>
+    function removeItem(element) {
+      const li = element.closest('li');
+      if (!li) return;
+
+      element.classList.add('btn-animate');
+      li.classList.add('animate-out');
+
+      li.addEventListener('animationend', () => {
+        li.remove();
+      });
+    }
+  </script>
 </html>

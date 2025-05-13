@@ -9,12 +9,18 @@ app.get("/agendamentos", (req, res) => {
   const htmlPath = path.join(__dirname, "public", "agendamentos.html");
   let html = fs.readFileSync(htmlPath, "utf8");
 
+  function animaLi(element) {
+    const liParent = element.parent('li')
+    liParent.classList.add('anima-li')
+  }
+
   const agendaHtml = schedule
     .map((slot) => {
+      const id = Math.floor(Math.random() * 1000)
       const status = slot.available
         ? '<span class="livre">Livre</span>'
         : `<span class="reservado">${slot.reservedBy || "Reservado"}</span>`;
-      return `<li><strong>${slot.time}</strong> – ${status}</li>`;
+      return `<li id="${id}" ><span class="time">${slot.time}</span> <span class="status">${status}</span> <button class="bt-remover-agenda" onclick="removeItem(this)">X</button></li>`;
     })
     .join("");
 
