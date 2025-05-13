@@ -4,6 +4,21 @@ const path = require("path");
 const express = require("express");
 const app = express();
 
+//Função para enviar o template com os botões
+function sendMenuComBotoes(to) {
+  const client = require("twilio")(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+
+  client.messages
+    .create({
+      from: "whatsapp:+14155238886",
+      to: to,
+      contentSid: "HX9075f84c6e5ebf42acb2b6c8738fdf33",
+    })
+    .then((msg) => console.log("🟢 Menu com botões enviado!", msg.sid))
+    .catch((err) => console.error("Erro ao enviar menu com botões:", err));
+}
+// Fim de função para enviar o template com os botões
+
 //Rota a página de agendamento
 app.get("/agendamentos", (req, res) => {
   const htmlPath = path.join(__dirname, "public", "agendamentos.html");
@@ -99,6 +114,16 @@ app.post("/reservar", (req, res) => {
 
 // Rota para receber mensagens do WhatsApp
 app.post("/webhook", (req, res) => {
+  if (
+    message.includes("oi") ||
+    message.includes("olá") ||
+    message.includes("menu") ||
+    message.includes("início")
+  ) {
+    sendMenuComBotoes(from);
+    return res.sendStatus(200);
+  }
+
   console.dir(req.body, { depth: null });
 
   const message = req.body.Body ? req.body.Body.toLowerCase() : "";
