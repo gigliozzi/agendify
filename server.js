@@ -136,7 +136,7 @@ app.post("/webhook", (req, res) => {
     message.includes("início")
   ) {
     sendMenuComBotoes(from);
-    return res.sendStatus(200).end;
+    return res.sendStatus(204).end;
   }
 
   console.log("Mensagem recebida:", message);
@@ -158,7 +158,7 @@ app.post("/webhook", (req, res) => {
     //const clienteReal = "whatsapp:+5521982822503"; // ← coloque seu número real aqui
 
     sendTextWhatsAppMessage(from, `💈 Agenda de hoje:\n${agenda}`);
-    return res.sendStatus(200).end; // 👈 Finaliza a resposta HTTP
+    return res.sendStatus(204).end; // 👈 Finaliza a resposta HTTP
   }
 
   if (payload === "horarios") {
@@ -207,7 +207,7 @@ app.post("/webhook", (req, res) => {
     );
   }
 
-  res.sendStatus(200).end;
+  res.sendStatus(204).end;
 });
 
 // ENVIA MENSAGEM VIA TEMPLATE APROVADO
