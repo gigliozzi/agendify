@@ -135,7 +135,7 @@ app.post("/webhook", (req, res) => {
     return res.sendStatus(200);
   }
 
-  console.dir(req.body, { depth: null });
+  console.log("Mensagem recebida:", message);
   console.log(">> Valor de 'from':", from);
   console.log(">> Valor de TWILIO_WHATSAPP_NUMBER:", TWILIO_WHATSAPP_NUMBER);
 
@@ -151,9 +151,9 @@ app.post("/webhook", (req, res) => {
 
     console.log("AGENDA FORMATADA:", agenda); // 👈 Adiciona este log
 
-    const clienteReal = "whatsapp:+5521982822503"; // ← coloque seu número real aqui
+    //const clienteReal = "whatsapp:+5521982822503"; // ← coloque seu número real aqui
 
-    sendTextWhatsAppMessage(clienteReal, `💈 Agenda de hoje:\n${agenda}`);
+    sendTextWhatsAppMessage(from, `💈 Agenda de hoje:\n${agenda}`);
     return res.sendStatus(200); // 👈 Finaliza a resposta HTTP
   }
 
