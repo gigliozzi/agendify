@@ -47,6 +47,7 @@ Crie um arquivo `.env` com:
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxx
 TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+-- account twilio upgraded 15/05/2025
 
 ## 🛠️ Como executar localmente
 
