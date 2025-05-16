@@ -136,7 +136,7 @@ app.post("/webhook", (req, res) => {
     message.includes("início")
   ) {
     sendMenuComBotoes(from);
-    return res.sendStatus(200);
+    return res.sendStatus(200).end;
   }
 
   console.log("Mensagem recebida:", message);
@@ -207,7 +207,7 @@ app.post("/webhook", (req, res) => {
     );
   }
 
-  res.sendStatus(200);
+  res.sendStatus(200).end;
 });
 
 // ENVIA MENSAGEM VIA TEMPLATE APROVADO
