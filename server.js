@@ -158,7 +158,7 @@ app.post("/webhook", (req, res) => {
     //const clienteReal = "whatsapp:+5521982822503"; // ← coloque seu número real aqui
 
     sendTextWhatsAppMessage(from, `💈 Agenda de hoje:\n${agenda}`);
-    return res.sendStatus(200); // 👈 Finaliza a resposta HTTP
+    return res.sendStatus(200).end; // 👈 Finaliza a resposta HTTP
   }
 
   if (message.includes("horários disponíveis")) {
