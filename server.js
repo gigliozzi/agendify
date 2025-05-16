@@ -161,7 +161,7 @@ app.post("/webhook", (req, res) => {
     return res.sendStatus(200).end; // 👈 Finaliza a resposta HTTP
   }
 
-  if (message.includes("horários disponíveis")) {
+  if (payload === "horarios") {
     const availableTimes = schedule
       .filter((slot) => slot.available)
       .map((slot) => slot.time)
