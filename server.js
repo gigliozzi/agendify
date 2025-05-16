@@ -10,7 +10,7 @@ function sendMenuComBotoes(to) {
 
   client.messages
     .create({
-      from: "whatsapp:+14155238886",
+      from: "whatsapp:+13412013542",
       to: to,
       contentSid: "HX9075f84c6e5ebf42acb2b6c8738fdf33",
     })
