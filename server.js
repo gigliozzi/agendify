@@ -122,8 +122,12 @@ app.post("/reservar", (req, res) => {
 // Rota para receber mensagens do WhatsApp
 app.post("/webhook", (req, res) => {
   const message = req.body.Body ? req.body.Body.toLowerCase() : "";
-  console.log("Mensagem recebida:", message);
   const from = req.body.From;
+
+  // Captura o payload do botão n template Twilio
+  const payload = req.body.ButtonPayload;
+  console.log("Mensagem recebida:", message);
+  console.log(">> Payload do botão:", payload); // para debug
 
   if (
     message.includes("oi") ||
