@@ -212,7 +212,7 @@ function sendTemplateWhatsAppMessage(to, name, time) {
 
   client.messages
     .create({
-      from: "whatsapp:+14155238886",
+      from: TWILIO_WHATSAPP_NUMBER,
       to: to,
       contentSid: "HX9a901c3f12a1457bb7dec4808b858f48", // <-- Substitua pelo seu contentSid real
       contentVariables: JSON.stringify({
