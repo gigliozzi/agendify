@@ -103,32 +103,17 @@ app.get("/horarios", (req, res) => {
 });
 
 // Rota para reservar um horário
-app.post("/reservar", (req, res) => {
-  const { time, phone } = req.body;
-  const slot = schedule.find((slot) => slot.time === time);
-
-  if (slot && slot.available) {
-    slot.available = false;
-    slot.reservedBy = "Cliente Whatsapp"; // <- opcionalmente, você pode pedir o nome futuramente
-    salvarAgenda(); // Salva a agenda atualizada
-    console.log(">> Enviando mensagem para:", phone);
-    sendTemplateWhatsAppMessage(phone, "Cliente", time); // ← Template com nome e hora
-    res.json({ message: `Horário ${time} reservado com sucesso!` });
-  } else {
-    res.status(400).json({ message: "Horário não disponível" });
-  }
-});
-
-// Rota para receber mensagens do WhatsApp
 app.post("/webhook", (req, res) => {
   const message = req.body.Body ? req.body.Body.toLowerCase() : "";
   const from = req.body.From;
-
-  // Captura o payload do botão n template Twilio
   const payload = req.body.ButtonPayload;
-  console.log("Mensagem recebida:", message);
-  console.log(">> Payload do botão:", payload); // para debug
 
+  console.log("Mensagem recebida:", message);
+  console.log(">> Payload do botão:", payload);
+  console.log(">> Valor de 'from':", from);
+  console.log(">> Valor de TWILIO_WHATSAPP_NUMBER:", TWILIO_WHATSAPP_NUMBER);
+
+  // 1. Menu inicial
   if (
     message.includes("oi") ||
     message.includes("olá") ||
@@ -136,13 +121,10 @@ app.post("/webhook", (req, res) => {
     message.includes("início")
   ) {
     sendMenuComBotoes(from);
-    return res.sendStatus(204).end;
+    return res.sendStatus(204).end();
   }
 
-  console.log("Mensagem recebida:", message);
-  console.log(">> Valor de 'from':", from);
-  console.log(">> Valor de TWILIO_WHATSAPP_NUMBER:", TWILIO_WHATSAPP_NUMBER);
-
+  // 2. Mostrar agenda formatada
   if (message.includes("mostrar agenda")) {
     const agenda = schedule
       .map((slot) => {
@@ -153,14 +135,11 @@ app.post("/webhook", (req, res) => {
       })
       .join("\n");
 
-    console.log("AGENDA FORMATADA:", agenda); // 👈 Adiciona este log
-
-    //const clienteReal = "whatsapp:+5521982822503"; // ← coloque seu número real aqui
-
     sendTextWhatsAppMessage(from, `💈 Agenda de hoje:\n${agenda}`);
-    return res.sendStatus(204).end; // 👈 Finaliza a resposta HTTP
+    return res.sendStatus(204).end();
   }
 
+  // 3. Botão "Ver horários disponíveis"
   if (payload === "horarios") {
     const availableTimes = schedule
       .filter((slot) => slot.available)
@@ -178,7 +157,62 @@ app.post("/webhook", (req, res) => {
         "Desculpe, não há horários disponíveis no momento."
       );
     }
-  } else if (message.includes("reservar")) {
+
+    return res.sendStatus(204).end();
+  }
+
+  // 4. Botão "Reservar um horário" via List Picker
+  if (payload && payload.startsWith("reserva_")) {
+    const selectedHour = payload.replace("reserva_", "") + ":00";
+
+    const slot = schedule.find((slot) => slot.time === selectedHour);
+    if (slot && slot.available) {
+      slot.available = false;
+      slot.reservedBy = "byCiente";
+
+      salvarAgenda();
+
+      sendTextWhatsAppMessage(
+        from,
+        `✅ Horário ${selectedHour} reservado com sucesso!`
+      );
+
+      // Notifica o proprietário
+      const PROPRIETARIO = TWILIO_WHATSAPP_NUMBER;
+      sendTextWhatsAppMessage(
+        PROPRIETARIO,
+        `📅 O cliente reservou o horário ${selectedHour}.`
+      );
+    } else {
+      sendTextWhatsAppMessage(
+        from,
+        `❌ Desculpe, o horário ${selectedHour} não está mais disponível.`
+      );
+    }
+
+    return res.sendStatus(204).end();
+  }
+
+  // 5. Botão "Falar com atendente"
+  if (payload === "atendente") {
+    sendTextWhatsAppMessage(
+      from,
+      "🧑‍💼 Você será redirecionado para um atendente. Por favor, aguarde enquanto alguém entra em contato com você."
+    );
+
+    const PROPRIETARIO = TWILIO_WHATSAPP_NUMBER;
+    sendTextWhatsAppMessage(
+      PROPRIETARIO,
+      `📞 O cliente solicitou falar com um atendente.`
+    );
+
+    return res.sendStatus(204).end();
+  }
+
+  // 6. Entrada digitada: "Reservar 14:00"
+  // Este trecho poderá ser removido no futuro,
+  // pois a interação com o menu já está sendo feita via payload
+  if (message.includes("reservar")) {
     const selectedTime = message.match(/\d{2}:\d{2}/);
     if (
       selectedTime &&
@@ -186,7 +220,7 @@ app.post("/webhook", (req, res) => {
     ) {
       const slot = schedule.find((slot) => slot.time === selectedTime[0]);
       slot.available = false;
-      slot.reservedBy = "Cliente WhatsApp";
+      slot.reservedBy = "byCiente";
 
       salvarAgenda();
 
@@ -200,15 +234,19 @@ app.post("/webhook", (req, res) => {
         "Desculpe, esse horário não está disponível."
       );
     }
-  } else {
-    sendTextWhatsAppMessage(
-      from,
-      'Olá! Para verificar horários disponíveis, envie "Horários disponíveis". Para reservar, envie "Reservar HH:MM".'
-    );
+
+    return res.sendStatus(204).end();
   }
 
-  res.sendStatus(204).end;
+  // 7. Fallback para mensagens fora do fluxo
+  sendTextWhatsAppMessage(
+    from,
+    'Olá! Para verificar horários disponíveis, envie "Horários disponíveis". Para reservar, envie "Reservar HH:MM".'
+  );
+
+  return res.sendStatus(204).end();
 });
+
 
 // ENVIA MENSAGEM VIA TEMPLATE APROVADO
 function sendTemplateWhatsAppMessage(to, name, time) {
