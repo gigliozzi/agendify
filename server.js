@@ -19,6 +19,21 @@ function sendMenuComBotoes(to) {
 }
 // Fim de função para enviar o template com os botões
 
+// Função enviar Card de reserva de horário
+function sendCardReservarHorario(to) {
+  const client = require("twilio")(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+
+  client.messages
+    .create({
+      from: "whatsapp:+13412013542", // seu número oficial Twilio
+      to: to,
+      contentSid: "HXbfade588bf709b61fd4037117f7132d4", // seu template aprovado tipo Card
+    })
+    .then((msg) => console.log("🟢 Card com horários enviado:", msg.sid))
+    .catch((err) => console.error("❌ Erro ao enviar card:", err));
+}
+// fim de função enviar Card de reserva de horário
+
 //Rota a página de agendamento
 app.get("/agendamentos", (req, res) => {
   const htmlPath = path.join(__dirname, "public", "agendamentos.html");
@@ -161,6 +176,12 @@ app.post("/webhook", (req, res) => {
     return res.sendStatus(204).end();
   }
 
+  // 3.5. Botão "Reservar um horário" → Envia Card com horários disponíveis
+  if (payload === "reservar") {
+    sendCardReservarHorario(from);
+    return res.sendStatus(204).end();
+  }
+
   // 4. Botão "Reservar um horário" via List Picker
   if (payload && payload.startsWith("reserva_")) {
     const selectedHour = payload.replace("reserva_", "") + ":00";
@@ -168,7 +189,7 @@ app.post("/webhook", (req, res) => {
     const slot = schedule.find((slot) => slot.time === selectedHour);
     if (slot && slot.available) {
       slot.available = false;
-      slot.reservedBy = "byCiente";
+      slot.reservedBy = "byCliente";
 
       salvarAgenda();
 
@@ -220,7 +241,7 @@ app.post("/webhook", (req, res) => {
     ) {
       const slot = schedule.find((slot) => slot.time === selectedTime[0]);
       slot.available = false;
-      slot.reservedBy = "byCiente";
+      slot.reservedBy = "byCliente";
 
       salvarAgenda();
 
@@ -246,7 +267,7 @@ app.post("/webhook", (req, res) => {
 
   return res.sendStatus(204).end();
 });
-
+// FIM /webhook
 
 // ENVIA MENSAGEM VIA TEMPLATE APROVADO
 function sendTemplateWhatsAppMessage(to, name, time) {
